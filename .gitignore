@@ -1,0 +1,7 @@
+  
+node_modules
+public/img/houses
+.next
+.DS_Store
+.vscode/settings.json
+.env
