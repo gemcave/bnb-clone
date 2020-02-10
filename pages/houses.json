@@ -1,0 +1,18 @@
+[
+  {
+    "picture": "/img/houses/1.jpg",
+    "type": "Entire house",
+    "town": "Krakow",
+    "title": "Beautiful New Studio OldTown MarketSquare A/C 5",
+    "rating": 4.90,
+    "reviewsCount": 376
+  },
+  {
+    "picture": "/img/houses/2.jpg",
+    "type": "Entire house",
+    "town": "Krakow",
+    "title": "Cosy flat, best location & two seperate bedrooms",
+    "rating": 4.76,
+    "reviewsCount": 256
+  }
+]
