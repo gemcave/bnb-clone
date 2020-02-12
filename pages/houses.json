@@ -1,6 +1,7 @@
 [
   {
 		"id": "1",
+		"hostName": "Anna",
     "picture": "/img/houses/1.jpg",
     "type": "Entire house",
     "town": "Krakow",
