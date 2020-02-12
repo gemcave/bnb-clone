@@ -1,3 +1,7 @@
+const User = require('./models/user.js');
+const House = require('./models/house.js');
+const Review = require('./models/review.js');
+
 const express = require('express');
 const next = require('next');
 
@@ -8,13 +12,17 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
 const bodyParser = require('body-parser');
-const { User } = require('./model.js');
-const { sequelize } = require('./model.js');
+
+const sequelize = require('./database.js');
 
 const sessionStore = new SequelizeStore({
   db: sequelize,
 });
 sessionStore.sync();
+
+User.sync({ alter: true });
+House.sync({ alter: true });
+Review.sync({ alter: true });
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 const dev = process.env.NODE_ENV !== 'production';
