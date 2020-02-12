@@ -1,35 +1,38 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useStoreActions } from 'easy-peasy';
 
 export default props => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordconfirmation, setPasswordconfirmation] = useState('');
 
-  const submit = async () => {
-    try {
-      const response = await axios.post('auth/register', {
-        email,
-        password,
-        passwordconfirmation,
-      });
-      if (response.data.status === 'error') {
-        alert(response.data.message);
-        return;
-      }
-    } catch (error) {
-      alert(error.response.data.message);
-    }
-  };
+  const setUser = useStoreActions(actions => actions.user.setUser);
+  const setHideModal = useStoreActions(actions => actions.modals.setHideModal);
 
   return (
     <>
       <h2>Sign up</h2>
       <div>
         <form
-          onSubmit={event => {
+          onSubmit={async event => {
+            try {
+              const response = await axios.post('/api/auth/register', {
+                email,
+                password,
+                passwordconfirmation,
+              });
+              if (response.data.status === 'error') {
+                alert(response.data.message);
+                return;
+              }
+              setUser(email);
+              setHideModal();
+            } catch (error) {
+              alert(error.response.data.message);
+              return;
+            }
             event.preventDefault();
-            submit();
           }}
         >
           <input

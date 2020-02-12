@@ -1,18 +1,20 @@
 const express = require('express');
 const next = require('next');
 
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-
 const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+
+const bodyParser = require('body-parser');
 const { User } = require('./model.js');
 const { sequelize } = require('./model.js');
 
 const sessionStore = new SequelizeStore({
   db: sequelize,
 });
+sessionStore.sync();
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 const dev = process.env.NODE_ENV !== 'production';
@@ -64,6 +66,15 @@ nextApp.prepare().then(() => {
   const server = express();
 
   server.use(
+    bodyParser.json({
+      verify: (req, res, buf) => {
+        // make rawBody available
+        req.rawBody = buf;
+      },
+    })
+  );
+
+  server.use(
     session({
       secret: '343ji43j4n3jn4jk3n', // enter a random string here
       resave: false,
@@ -79,6 +90,14 @@ nextApp.prepare().then(() => {
     passport.session()
   );
 
+  server.post('/api/auth/logout', (req, res) => {
+    req.logout();
+    req.session.destroy();
+    return res.end(
+      JSON.stringify({ status: 'success', message: 'Logged out' })
+    );
+  });
+
   server.post('/api/auth/register', async (req, res) => {
     const { email, password, passwordconfirmation } = req.body;
 
@@ -91,6 +110,7 @@ nextApp.prepare().then(() => {
 
     try {
       const user = await User.create({ email, password });
+
       req.login(user, err => {
         if (err) {
           res.statusCode = 500;
@@ -102,7 +122,6 @@ nextApp.prepare().then(() => {
           JSON.stringify({ status: 'success', message: 'Logged in' })
         );
       });
-      res.end(JSON.stringify({ status: 'success', message: 'User added' }));
     } catch (error) {
       res.statusCode = 500;
       let message = 'An error occurred';
@@ -112,8 +131,6 @@ nextApp.prepare().then(() => {
       res.end(JSON.stringify({ status: 'error', message }));
     }
   });
-
-  sessionStore.sync();
 
   server.all('*', (req, res) => handle(req, res));
 
