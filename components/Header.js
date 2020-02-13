@@ -36,6 +36,11 @@ const Header = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/host/new">
+                  <a>Add House</a>
+                </Link>
+              </li>
+              <li>
                 <a
                   href="#"
                   onClick={async () => {
