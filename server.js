@@ -1,6 +1,8 @@
 const User = require('./models/user.js');
 const House = require('./models/house.js');
 
+const sanitizeHtml = require('sanitize-html');
+
 const dotenv = require('dotenv');
 
 const express = require('express');
@@ -552,6 +554,10 @@ nextApp.prepare().then(() => {
   server.post('/api/host/new', async (req, res) => {
     const houseData = req.body.house;
 
+    houseData.description = sanitizeHtml(houseData.description, {
+      allowedTags: ['b', 'i', 'em', 'strong', 'p', 'br'],
+    });
+
     if (!req.session.passport) {
       res.writeHead(403, {
         'Content-Type': 'application/json',
@@ -580,6 +586,10 @@ nextApp.prepare().then(() => {
 
   server.post('/api/host/edit', async (req, res) => {
     const houseData = req.body.house;
+
+    houseData.description = sanitizeHtml(houseData.description, {
+      allowedTags: ['b', 'i', 'em', 'strong', 'p', 'br'],
+    });
 
     if (!req.session.passport) {
       res.writeHead(403, {
