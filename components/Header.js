@@ -85,6 +85,7 @@ const Header = () => {
           display: block;
           margin-right: 15px;
           color: #333;
+          display: flex;
         }
 
         nav a {
@@ -94,14 +95,16 @@ const Header = () => {
         .nav-container {
           border-bottom: 1px solid #eee;
           height: 50px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
         }
-
         img {
-          float: left;
+          margin-left: 20px;
         }
 
         ul {
-          float: right;
+          flex-direction: row;
         }
 
         .username {
