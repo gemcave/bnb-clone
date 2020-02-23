@@ -11,7 +11,7 @@ const House = props => (
       </p>
       <p>{props.title}</p>
       <p>
-        {props.rating} ({props.reviewsCount})
+        {props.rating} {props.reviewsCount && `(${props.reviewsCount})`}
       </p>
     </a>
   </Link>
