@@ -15,6 +15,10 @@ User.init(
       type: Sequelize.DataTypes.STRING,
       allowNull: false,
     },
+    username: {
+      type: Sequelize.DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     sequelize,
