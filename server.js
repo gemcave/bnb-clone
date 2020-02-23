@@ -17,6 +17,7 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
 
 const bodyParser = require('body-parser');
 
@@ -67,6 +68,18 @@ const dev = process.env.NODE_ENV !== 'production';
 const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
 
+passport.serializeUser((user, done) => {
+  console.log(`2${user}`);
+  done(null, user);
+});
+
+passport.deserializeUser((email, done) => {
+  console.log(`3${email}`);
+  User.findOne({ where: { email } }).then(user => {
+    done(null, user);
+  });
+});
+
 passport.use(
   new LocalStrategy(
     {
@@ -98,15 +111,31 @@ passport.use(
   )
 );
 
-passport.serializeUser((user, done) => {
-  done(null, user.email);
-});
-
-passport.deserializeUser((email, done) => {
-  User.findOne({ where: { email } }).then(user => {
-    done(null, user);
-  });
-});
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
+      callbackURL: '/auth/facebook/callback',
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      console.log(profile);
+      const [user, created] = await User.findOrCreate({
+        where: { username: profile.displayName },
+        defaults: {
+          email: 'John Doe',
+          password: Math.random()
+            .toString(36)
+            .slice(-8),
+        },
+      });
+      if (created) {
+        return done(created, profile);
+      }
+      return done(null, profile);
+    }
+  )
+);
 
 nextApp.prepare().then(() => {
   const server = express();
@@ -224,6 +253,18 @@ nextApp.prepare().then(() => {
       });
     })(req, res, next);
   });
+
+  server.get('/auth/facebook', passport.authenticate('facebook'));
+
+  server.get(
+    '/auth/facebook/callback',
+    passport.authenticate('facebook', { failureRedirect: '/' }),
+    function(req, res) {
+      // Successful authentication, redirect home.
+      console.log('auth');
+      res.redirect('/bookings');
+    }
+  );
 
   server.get('/api/houses', (req, res) => {
     House.findAndCountAll().then(result => {
