@@ -10,8 +10,10 @@ export default props => {
 
   return (
     <>
-      <h2>Sign up</h2>
+      <h2>Sign in</h2>
       <div>
+        <a href="/auth/facebook">Facebook</a>
+        <a href="/auth/twitter">Twitter</a>
         <form
           onSubmit={async event => {
             try {
