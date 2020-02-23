@@ -121,7 +121,7 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       console.log(profile);
       const [user, created] = await User.findOrCreate({
-        where: { name: profile.displayName },
+        where: { username: profile.displayName },
         defaults: {
           email: 'John Doe',
           password: Math.random()
